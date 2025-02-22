@@ -230,8 +230,8 @@ The GNU General Public License does not permit incorporating your program into p
 #define EEPROM_SIZE 512
 #define EEPROM_ADDR_SSID 0
 #define EEPROM_ADDR_PASSWORD (EEPROM_ADDR_SSID + 32)
-#define EEPROM_ADDR_DFU 256 
-#define ESPOS_VERSION "1.0"
+#define EEPROM_ADDR_DFU 256  // Dirección para la flag de DFU
+#define ESPOS_VERSION "1.1beta2"
 
 bool wifiConfigured = false;
 bool wifiAPRunning = false;
@@ -243,7 +243,7 @@ WebServer server(80);
 //////////////////////////////////////////////
 // Funciones DFU (modo actualización OTA)   //
 //////////////////////////////////////////////
-
+/*
 void handleDFURoot() {
   String html = "<html><body>";
   html += "<h3>ESPOS Bootloader - Modo DFU</h3>";
@@ -256,6 +256,26 @@ void handleDFURoot() {
   html += "<form action='/exitdfu' method='GET'>";
   html += "<input type='submit' value='Salir del DFU'>";
   html += "<h6>ESPOS DFU bootloader - v1.1</h6>";
+  html += "</form>";
+  html += "</body></html>";
+  server.send(200, "text/html", html);
+}
+*/
+
+void handleDFURoot() {
+  String html = "<html><body>";
+  html += "<h3>ESPOS Bootloader - Modo DFU</h3>";
+  html += "<form action='/upload' method='POST' enctype='multipart/form-data'>";
+  html += "Selecciona el archivo .bin:<br>";
+  html += "<input type='file' name='update' accept='.bin' required><br><br>";
+  html += "<input type='submit' value='Escribir actualización'>";
+  html += "</form>";
+  html += "<br><br>";
+  html += "<form action='/exitdfu' method='GET'>";
+  html += "<input type='submit' value='Salir del DFU'>";
+  html += "<h6>ESPOS DFU bootloader - v1.2</h6>";
+  html += "<h6>ESPOS Version: " + String(ESPOS_VERSION) + "</h6>";
+  html += "<h6>Compiled: " + String(__DATE__) + " " + String(__TIME__) + "</h6>";
   html += "</form>";
   html += "</body></html>";
   server.send(200, "text/html", html);
@@ -380,6 +400,7 @@ void setup() { //Bootloader y configuración
 }
 
 void loop() {
+  
   server.handleClient();
 
   if (Serial.available() > 0) {

@@ -4,7 +4,7 @@
 The ESPOS Project aims to create a text operating system on ESP32 Hardware.
 
 # Contribution Guidelines  
-Thank you for your interest in contributing to **ESPOS**! This project is an **open-source operating system for ESP32** built entirely in **Arduino (.ino) format**. Contributions are welcome and encouraged! Please follow these guidelines to ensure a smooth collaboration.  
+Thank you for your interest in contributing to **ESPOS**! This project is an **open-source operating system for ESP32** built entirely in **Arduino format**. Contributions are welcome and encouraged! Please follow these guidelines to ensure a smooth collaboration.  
 ## 📜 General Rules  
 - Be respectful and maintain a positive environment.  
 - All contributions must comply with the **GNU GPLv3 License**.  

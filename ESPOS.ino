@@ -226,12 +226,13 @@ The GNU General Public License does not permit incorporating your program into p
 #include <EEPROM.h>
 #include <WebServer.h>
 #include <Update.h>
+#include "api.h"
 
 #define EEPROM_SIZE 512
 #define EEPROM_ADDR_SSID 0
 #define EEPROM_ADDR_PASSWORD (EEPROM_ADDR_SSID + 32)
 #define EEPROM_ADDR_DFU 256  // Dirección para la flag de DFU
-#define ESPOS_VERSION "1.1beta2"
+#define ESPOS_VERSION "1.3"
 
 bool wifiConfigured = false;
 bool wifiAPRunning = false;
@@ -348,11 +349,16 @@ void startDFUMode() {
   // hlt();
 }
 
-
+/*
 void hlt() {
+  delay(1000);
   hlt();
 }
+*/
 
+void hlt() {
+  esp_deep_sleep_start();
+}
 
 //////////////////////////////////////////////
 // Funciones de WiFi y servidor web         //
@@ -378,7 +384,8 @@ void setup() { //Bootloader y configuración
 //                        Fin del bootloader DFU                             //
 ///////////////////////////////////////////////////////////////////////////////
 
-  Serial.println("ESPOS, v1.0");
+
+  Serial.println("ESPOS: " + String(ESPOS_VERSION));
   license();
   Serial.println("Escribe 'help' para una lista detallada de comandos");
  
@@ -439,7 +446,11 @@ void loop() {
     } else if (command == "reboot") {
       Serial.println("Reiniciando ESP32...");
       ESP.restart();
-        } else if (command == "ver") {
+    } else if (command == "panic") {
+      panic();
+    } else if (command == "e2check") {
+      e2check();
+    } else if (command == "ver") {
       Serial.println("ESPOS - Version " ESPOS_VERSION);
       Serial.println("Compiled on " __DATE__ ", " __TIME__);
     } else if (command == "echo") {
@@ -462,6 +473,16 @@ void loop() {
       Serial .println("Comando no reconocido. Usa 'help' para obtener ayuda.");
     }
     Serial.print("ESP:\\>");
+  }
+}
+
+void e2check() {
+  for (int i = 0; i <= 512; i++) {
+    byte value = EEPROM.read(i);  // Leer el valor de la celda i
+    Serial.print("Dirección ");
+    Serial.print(i);
+    Serial.print(": ");
+    Serial.println(value, DEC);  // Imprimir el valor en decimal
   }
 }
 
@@ -529,6 +550,8 @@ void connectWiFi(const char* ssid, const char* password) {
   Serial.println("Conexión exitosa a la red WiFi.");
 }
 
+
+
 void configureWiFiAP(const char* ssid, const char* password) {
   WiFi.softAP(ssid, password);
   IPAddress IP = WiFi.softAPIP();
@@ -577,11 +600,11 @@ void license() {
 void printHelp() {
   Serial.println("Comandos disponibles:");
   /*
-  Serial.println("wificonfig - Configurar las credenciales WiFi");
   Serial.println("wifiap - Configurar un punto de acceso WiFi");
   Serial.println("wifiapstop - Detener el punto de acceso WiFi");
   Serial.println("webserver - Habilitar la configuración del servidor web");
   */
+  Serial.println("wificonfig - Configurar las credenciales WiFi");
   Serial.println("reboot - Reiniciar el ESP32");
   Serial.println("echo - Imprimir un mensaje");
   Serial.println("kernelcrash - Iniciar fallo del kernel");

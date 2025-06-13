@@ -232,7 +232,7 @@ The GNU General Public License does not permit incorporating your program into p
 #define EEPROM_ADDR_SSID 0
 #define EEPROM_ADDR_PASSWORD (EEPROM_ADDR_SSID + 32)
 #define EEPROM_ADDR_DFU 256  // Dirección para la flag de DFU
-#define ESPOS_VERSION "1.3"
+#define ESPOS_VERSION "1.4"
 
 bool wifiConfigured = false;
 bool wifiAPRunning = false;
